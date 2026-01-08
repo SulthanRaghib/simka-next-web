@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ShieldSeeder::class,
             WorkUnitSeeder::class,
+            JobPositionSeeder::class,
         ]);
 
         // 2. Create the user
