@@ -6,6 +6,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -29,6 +30,13 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'nip',
+        'work_unit_id',
+        'job_position_id',
+        'phone_number',
+        'address',
+        'gender',
+        'is_active',
     ];
 
     /**
@@ -51,6 +59,17 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function workUnit(): BelongsTo
+    {
+        return $this->belongsTo(WorkUnit::class);
+    }
+
+    public function jobPosition(): BelongsTo
+    {
+        return $this->belongsTo(JobPosition::class);
     }
 }
