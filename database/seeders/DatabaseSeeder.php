@@ -16,7 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Create the user
+        // 1. Setup Roles & Permissions first
+        $this->call([
+            ShieldSeeder::class,
+            WorkUnitSeeder::class,
+        ]);
+
+        // 2. Create the user
         $user = User::firstOrCreate(
             ['email' => 'admin@simka.com'], // Identifier
             [
@@ -26,7 +32,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Assign the role (defined in config/filament-shield.php)
+        // 3. Assign the role (now guaranteed to exist)
         $user->assignRole('super_admin');
     }
 }
