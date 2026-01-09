@@ -1,4 +1,64 @@
-@import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+
+.fi-sidebar {
+    background-color: #1e293b !important;
+    border-right-color: #334155 !important;
+}
+
+.fi-sidebar-header {
+    background-color: #1e293b !important;
+    border-bottom-color: #334155 !important;
+}
+
+.fi-sidebar-item-label {
+    color: #f1f5f9 !important;
+}
+
+.fi-sidebar-item-icon {
+    color: #94a3b8 !important;
+}
+
+.fi-sidebar-item-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fi-sidebar-item:hover .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active .fi-sidebar-item-label {
+    color: #ffffff !important;
+}
+
+.fi-sidebar-item:hover .fi-sidebar-item-icon,
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
+    color: #fbbf24 !important; /* Amber-400 to match logo */
+}
+
+/* Navigation Groups */
+.fi-sidebar-group-label span {
+    color: #cbd5e1 !important;
+}
+
+/* Topbar */
+.fi-topbar {
+    background-color: #1e293b !important;
+    border-bottom-color: #334155 !important;
+}
+
+.fi-topbar-item-btn {
+    color: #f1f5f9 !important;
+}
+
+/* Sidebar Toggle & Other Buttons in Topbar */
+.fi-topbar .fi-icon-btn {
+    color: #f1f5f9 !important;
+}
+
+.fi-topbar .fi-icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
