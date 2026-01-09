@@ -17,9 +17,13 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    protected static ?string $recordRouteKeyName = 'nip';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static string|UnitEnum|null $navigationGroup = 'Manajemen Pegawai';
+
+    protected static ?string $navigationLabel = 'Data Pegawai';
 
     public static function form(Schema $schema): Schema
     {
@@ -44,6 +48,7 @@ class UserResource extends Resource
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
+            'profile' => Pages\EmployeeProfile::route('/{record}/profile'),
         ];
     }
 }
