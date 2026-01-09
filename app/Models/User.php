@@ -31,10 +31,20 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'nip',
+        'nama_cetak_tanpa_gelar',
+        'nama_cetak_dengan_gelar',
         'work_unit_id',
         'job_position_id',
+        'struktural_position_id',
+        'pangkat_golongan_id',
+        'tmt_golongan',
+        'jenis_asn_id',
+        'jenis_jab_id',
+        'employment_status_id',
         'phone_number',
         'address',
+        'birth_place',
+        'birth_date',
         'gender',
         'is_active',
     ];
@@ -60,6 +70,8 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'birth_date' => 'date',
+            'tmt_golongan' => 'date',
         ];
     }
 
@@ -71,5 +83,30 @@ class User extends Authenticatable implements FilamentUser
     public function jobPosition(): BelongsTo
     {
         return $this->belongsTo(JobPosition::class);
+    }
+
+    public function rank(): BelongsTo
+    {
+        return $this->belongsTo(Rank::class, 'pangkat_golongan_id');
+    }
+
+    public function asnType(): BelongsTo
+    {
+        return $this->belongsTo(AsnType::class, 'jenis_asn_id');
+    }
+
+    public function jobType(): BelongsTo
+    {
+        return $this->belongsTo(JobType::class, 'jenis_jab_id');
+    }
+
+    public function employmentStatus(): BelongsTo
+    {
+        return $this->belongsTo(EmploymentStatus::class, 'employment_status_id');
+    }
+
+    public function structuralPosition(): BelongsTo
+    {
+        return $this->belongsTo(JobPosition::class, 'struktural_position_id');
     }
 }
