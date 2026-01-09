@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class AsnTypePolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:AsnType');
@@ -33,6 +33,11 @@ class AsnTypePolicy
     }
 
     public function delete(AuthUser $authUser, AsnType $asnType): bool
+    {
+        return $authUser->can('Delete:AsnType');
+    }
+
+    public function deleteAny(AuthUser $authUser): bool
     {
         return $authUser->can('Delete:AsnType');
     }
@@ -66,5 +71,4 @@ class AsnTypePolicy
     {
         return $authUser->can('Reorder:AsnType');
     }
-
 }

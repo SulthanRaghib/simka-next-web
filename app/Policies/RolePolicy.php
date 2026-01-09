@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class RolePolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Role');
@@ -33,6 +33,11 @@ class RolePolicy
     }
 
     public function delete(AuthUser $authUser, Role $role): bool
+    {
+        return $authUser->can('Delete:Role');
+    }
+
+    public function deleteAny(AuthUser $authUser): bool
     {
         return $authUser->can('Delete:Role');
     }
@@ -66,5 +71,4 @@ class RolePolicy
     {
         return $authUser->can('Reorder:Role');
     }
-
 }

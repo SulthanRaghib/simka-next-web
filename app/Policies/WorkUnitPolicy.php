@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class WorkUnitPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:WorkUnit');
@@ -33,6 +33,11 @@ class WorkUnitPolicy
     }
 
     public function delete(AuthUser $authUser, WorkUnit $workUnit): bool
+    {
+        return $authUser->can('Delete:WorkUnit');
+    }
+
+    public function deleteAny(AuthUser $authUser): bool
     {
         return $authUser->can('Delete:WorkUnit');
     }
@@ -66,5 +71,4 @@ class WorkUnitPolicy
     {
         return $authUser->can('Reorder:WorkUnit');
     }
-
 }

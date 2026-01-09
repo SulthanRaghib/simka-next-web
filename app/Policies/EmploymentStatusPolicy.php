@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class EmploymentStatusPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:EmploymentStatus');
@@ -33,6 +33,11 @@ class EmploymentStatusPolicy
     }
 
     public function delete(AuthUser $authUser, EmploymentStatus $employmentStatus): bool
+    {
+        return $authUser->can('Delete:EmploymentStatus');
+    }
+
+    public function deleteAny(AuthUser $authUser): bool
     {
         return $authUser->can('Delete:EmploymentStatus');
     }
@@ -66,5 +71,4 @@ class EmploymentStatusPolicy
     {
         return $authUser->can('Reorder:EmploymentStatus');
     }
-
 }
