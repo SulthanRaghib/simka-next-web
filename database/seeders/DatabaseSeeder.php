@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
         // 1. Setup Roles & Permissions first
         $this->call([
             ShieldSeeder::class,
+            RankSeeder::class,
+            AsnTypeSeeder::class,
+            JobTypeSeeder::class,
+            EmploymentStatusSeeder::class,
             WorkUnitSeeder::class,
             JobPositionSeeder::class,
         ]);
