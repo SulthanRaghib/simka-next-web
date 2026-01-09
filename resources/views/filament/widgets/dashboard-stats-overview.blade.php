@@ -80,10 +80,10 @@
                 </div>
                 <div
                     class="bg-gray-50 dark:bg-gray-800/50 px-6 py-3 border-t border-[#E2E8F0] dark:border-[#334155] flex justify-end">
-                    <button
+                    <a href="{{ \App\Filament\Resources\Users\UserResource::getUrl('profile', ['record' => $user->nip]) }}"
                         class="text-xs font-semibold text-[#0EA5E9] hover:text-blue-700 dark:hover:text-blue-400 flex items-center gap-1 transition-colors">
                         VIEW FULL PROFILE <x-heroicon-m-arrow-right class="w-4 h-4" />
-                    </button>
+                    </a>
                 </div>
             </div>
 
