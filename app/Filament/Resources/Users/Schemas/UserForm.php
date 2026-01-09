@@ -155,11 +155,13 @@ class UserForm
                     ]),
 
                 Section::make('Login Information')
+                    ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->required()
                             ->maxLength(255),
+
                         Forms\Components\TextInput::make('password')
                             ->password()
                             ->dehydrateStateUsing(fn($state) => Hash::make($state))
@@ -167,6 +169,14 @@ class UserForm
                             ->required(fn(string $context): bool => $context === 'create')
                             ->revealable()
                             ->maxLength(255),
+
+                        Forms\Components\Select::make('roles')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->required(),
+
                         Forms\Components\Toggle::make('is_active')
                             ->label('Active User')
                             ->default(true),
