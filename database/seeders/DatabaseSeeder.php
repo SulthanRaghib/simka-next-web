@@ -39,5 +39,35 @@ class DatabaseSeeder extends Seeder
 
         // 3. Assign the role (now guaranteed to exist)
         $user->assignRole('super_admin');
+
+        // 3. Create panel user
+        $panelUser = User::firstOrCreate(
+            // full data users
+            ['email' => 'dimas@simka.com'],
+            [
+                'name' => 'Dimas Prasetyo',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'nip' => '198765432109876543',
+                'phone_number' => '081234567890',
+                'address' => 'Jl. Merdeka No. 123, Jakarta',
+                'gender' => 'L',
+                'is_active' => true,
+                'work_unit_id' => 1,
+                'job_position_id' => 1,
+                'struktural_position_id' => 1,
+                'pangkat_golongan_id' => 1,
+                'tmt_golongan' => '2020-01-01',
+                'jenis_asn_id' => 1,
+                'jenis_jab_id' => 1,
+                'employment_status_id' => 1,
+                'nama_cetak_tanpa_gelar' => 'Dimas Prasetyo',
+                'nama_cetak_dengan_gelar' => 'Dimas Prasetyo, S.Kom',
+                'birth_place' => 'Jakarta',
+                'birth_date' => '1990-05-15',
+            ]
+        );
+
+        $panelUser->assignRole('panel_user');
     }
 }
