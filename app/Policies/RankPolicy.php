@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class RankPolicy
 {
     use HandlesAuthorization;
-
+    
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Rank');
@@ -33,11 +33,6 @@ class RankPolicy
     }
 
     public function delete(AuthUser $authUser, Rank $rank): bool
-    {
-        return $authUser->can('Delete:Rank');
-    }
-
-    public function deleteAny(AuthUser $authUser): bool
     {
         return $authUser->can('Delete:Rank');
     }
@@ -71,4 +66,5 @@ class RankPolicy
     {
         return $authUser->can('Reorder:Rank');
     }
+
 }

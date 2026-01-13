@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class JobPositionPolicy
 {
     use HandlesAuthorization;
-
+    
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:JobPosition');
@@ -33,11 +33,6 @@ class JobPositionPolicy
     }
 
     public function delete(AuthUser $authUser, JobPosition $jobPosition): bool
-    {
-        return $authUser->can('Delete:JobPosition');
-    }
-
-    public function deleteAny(AuthUser $authUser): bool
     {
         return $authUser->can('Delete:JobPosition');
     }
@@ -71,4 +66,5 @@ class JobPositionPolicy
     {
         return $authUser->can('Reorder:JobPosition');
     }
+
 }
