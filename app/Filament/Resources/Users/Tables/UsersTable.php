@@ -19,6 +19,7 @@ class UsersTable
                 Tables\Columns\TextColumn::make('nip')
                     ->label('NIP')
                     ->searchable()
+                    ->url(static fn($record): string => UsersResource::getUrl('profile', ['record' => $record->nip ?? $record->getKey()]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
