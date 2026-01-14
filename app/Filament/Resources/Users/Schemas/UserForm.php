@@ -6,6 +6,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Ramsey\Collection\Set;
 
@@ -175,12 +176,75 @@ class UserForm
                             ->multiple()
                             ->preload()
                             ->searchable()
-                            ->required(),
+                            ->required(fn(string $context): bool => $context === 'create')
+                            ->disabled(static fn(): bool => !self::currentUserCanManageRoles())
+                            ->helperText(static fn(): ?string => self::currentUserCanManageRoles() ? null : 'Hanya super_admin yang dapat mengganti role.'),
 
                         Forms\Components\Toggle::make('is_active')
                             ->label('Active User')
                             ->default(true),
                     ])
             ]);
+    }
+
+    protected static function currentUserCanManageRoles(): bool
+    {
+        if (!Auth::check()) {
+            return false;
+        }
+
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        if (method_exists($user, 'getRoleNames')) {
+            $roleNames = call_user_func([$user, 'getRoleNames']);
+
+            if ($roleNames instanceof \Illuminate\Support\Collection) {
+                return $roleNames->contains('super_admin');
+            }
+
+            if (is_array($roleNames)) {
+                return in_array('super_admin', $roleNames, true);
+            }
+        }
+
+        if (method_exists($user, 'roles')) {
+            $roles = call_user_func([$user, 'roles']);
+
+            if ($roles instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
+                return $roles->where('name', 'super_admin')->exists();
+            }
+
+            if ($roles instanceof \Illuminate\Support\Collection) {
+                return $roles->contains('name', 'super_admin');
+            }
+        }
+
+        $role = data_get($user, 'role.name');
+
+        if (is_string($role)) {
+            return $role === 'super_admin';
+        }
+
+        $rolesList = data_get($user, 'roles', []);
+
+        if ($rolesList instanceof \Illuminate\Support\Collection) {
+            return $rolesList->contains(function ($roleItem) {
+                return data_get($roleItem, 'name') === 'super_admin';
+            });
+        }
+
+        if (is_array($rolesList)) {
+            foreach ($rolesList as $roleItem) {
+                if (data_get($roleItem, 'name') === 'super_admin' || $roleItem === 'super_admin') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

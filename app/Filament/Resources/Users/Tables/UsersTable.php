@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use App\Filament\Resources\Users\UserResource as UsersResource;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Illuminate\Support\Facades\Auth;
 
 class UsersTable
 {
@@ -72,7 +73,20 @@ class UsersTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->visible(static function (): bool {
+                            if (! Auth::check()) {
+                                return false;
+                            }
+                            $user = Auth::user();
+                            if (!$user) {
+                                return false;
+                            }
+                            return (
+                                (method_exists($user, 'hasRole') && $user->hasRole('super_admin'))
+                                || $user->can('delete_any_user')
+                            );
+                        }),
                 ]),
             ]);
     }

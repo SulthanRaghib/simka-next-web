@@ -40,6 +40,17 @@ class UserPolicy
         return $authUser->can('Delete:User');
     }
 
+    public function deleteAny(\Illuminate\Foundation\Auth\User $authUser): bool
+    {
+        // Super admin bypass
+        if (method_exists($authUser, 'hasRole') && $authUser->hasRole('super_admin')) {
+            return true;
+        }
+
+        // Filament Shield convention: `delete_any_user`
+        return $authUser->can('delete_any_user');
+    }
+
     public function restore(AuthUser $authUser): bool
     {
         return $authUser->can('Restore:User');
