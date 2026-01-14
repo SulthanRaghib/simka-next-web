@@ -3,19 +3,25 @@
 namespace App\Policies;
 
 use Illuminate\Foundation\Auth\User as AuthUser;
+use App\Models\User as UserModel;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:User');
     }
 
-    public function view(AuthUser $authUser): bool
+    public function view(AuthUser $authUser, UserModel $model): bool
     {
+        // Allow users to view their own profile regardless of broader permissions
+        if ($authUser->getAuthIdentifier() === $model->getAuthIdentifier()) {
+            return true;
+        }
+
         return $authUser->can('View:User');
     }
 
@@ -63,5 +69,4 @@ class UserPolicy
     {
         return $authUser->can('Reorder:User');
     }
-
 }
