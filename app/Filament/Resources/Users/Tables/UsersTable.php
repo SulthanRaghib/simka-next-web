@@ -51,8 +51,6 @@ class UsersTable
                         default => 'gray',
                     })
                     ->sortable(),
-                Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Aktif'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('work_unit_id')
