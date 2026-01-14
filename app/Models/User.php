@@ -109,4 +109,12 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->belongsTo(JobPosition::class, 'struktural_position_id');
     }
+
+    /**
+     * Use NIP as the route key for model binding and URL generation.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'nip';
+    }
 }

@@ -11,6 +11,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class UserResource extends Resource
@@ -40,6 +42,25 @@ class UserResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        // FILAMENT SHIELD / ROLE CHECK
+        // If user is not super_admin, limit query to their own ID.
+        $user = Auth::user();
+
+        if (!$user) {
+            return $query;
+        }
+
+        if (! method_exists($user, 'hasRole') || ! $user->hasRole('super_admin')) {
+            $query->where($user->getAuthIdentifierName(), $user->getAuthIdentifier());
+        }
+
+        return $query;
     }
 
     public static function getPages(): array
