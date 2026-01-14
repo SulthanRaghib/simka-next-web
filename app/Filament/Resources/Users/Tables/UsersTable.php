@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use App\Filament\Resources\Users\UserResource as UsersResource;
 use Filament\Tables\Table;
 use Filament\Tables;
 
@@ -13,6 +14,7 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->recordUrl(null) // DISABLE ROW CLICK
             ->columns([
                 Tables\Columns\TextColumn::make('nip')
                     ->label('NIP')
@@ -66,7 +68,8 @@ class UsersTable
                     ->relationship('employmentStatus', 'name'),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->url(static fn($record): string => UsersResource::getUrl('edit', ['record' => $record->nip ?? $record->getKey()])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
