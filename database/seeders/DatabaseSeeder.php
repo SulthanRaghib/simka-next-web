@@ -34,6 +34,23 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
+                'nip' => '123456789012345678',
+                'phone_number' => '081234567890',
+                'address' => 'Jl. Merdeka No. 1, Jakarta',
+                'gender' => 'L',
+                'is_active' => true,
+                'work_unit_id' => 1,
+                'job_position_id' => 1,
+                'struktural_position_id' => 1,
+                'pangkat_golongan_id' => 1,
+                'tmt_golongan' => '2020-01-01',
+                'jenis_asn_id' => 1,
+                'jenis_jab_id' => 1,
+                'employment_status_id' => 1,
+                'nama_cetak_tanpa_gelar' => 'Super Admin',
+                'nama_cetak_dengan_gelar' => 'Super Admin, S.Kom',
+                'birth_place' => 'Jakarta',
+                'birth_date' => '1990-01-01',
             ]
         );
 
