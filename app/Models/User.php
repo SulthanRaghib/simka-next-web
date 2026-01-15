@@ -7,6 +7,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -116,5 +117,25 @@ class User extends Authenticatable implements FilamentUser
     public function getRouteKeyName(): string
     {
         return 'nip';
+    }
+
+    public function familyMembers(): HasMany
+    {
+        return $this->hasMany(FamilyMember::class);
+    }
+
+    public function medicalRecords(): HasMany
+    {
+        return $this->hasMany(MedicalRecord::class);
+    }
+
+    public function insurances(): HasMany
+    {
+        return $this->hasMany(Insurance::class);
+    }
+
+    public function hobbies(): HasMany
+    {
+        return $this->hasMany(Hobby::class);
     }
 }
