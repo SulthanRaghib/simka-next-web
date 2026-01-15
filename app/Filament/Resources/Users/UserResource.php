@@ -3,6 +3,10 @@
 namespace App\Filament\Resources\Users;
 
 use App\Filament\Resources\Users\Pages;
+use App\Filament\Resources\Users\RelationManagers\FamilyMembersRelationManager;
+use App\Filament\Resources\Users\RelationManagers\HobbiesRelationManager;
+use App\Filament\Resources\Users\RelationManagers\InsurancesRelationManager;
+use App\Filament\Resources\Users\RelationManagers\MedicalRecordsRelationManager;
 use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
@@ -40,7 +44,10 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            FamilyMembersRelationManager::class,
+            MedicalRecordsRelationManager::class,
+            InsurancesRelationManager::class,
+            HobbiesRelationManager::class,
         ];
     }
 
