@@ -2,8 +2,16 @@
     @php
         $employee = $record;
 
-        // Mock Data Structure (mimicking React state)
-        // In a real app, these would come from the User model relations
+        // Fetching Real Data from the Model
+        $familyMembers = $employee->familyMembers;
+        $hobbies = $employee->hobbies;
+        $medicalRecords = $employee->medicalRecords;
+        $insurances = $employee->insurances;
+
+        // Dynamic Status Helpers
+        $biodataStatus = ($familyMembers->isNotEmpty() || $hobbies->isNotEmpty()) ? 'Active' : 'Incomplete';
+        $healthStatus = ($medicalRecords->isNotEmpty() || $insurances->isNotEmpty()) ? 'Active' : 'No Data';
+
         $userModules = [
             [
                 'id' => 'master',
@@ -18,8 +26,16 @@
                 'title' => 'Biodata',
                 'description' => 'Personal information & family',
                 'icon' => '👤',
-                'status' => 'Complete',
-                'metadata' => 'Last updated: 12 Jun 2024',
+                'status' => $biodataStatus,
+                'metadata' => $familyMembers->count() . ' family members',
+            ],
+            [
+                'id' => 'kesehatan',
+                'title' => 'Kesehatan & Asuransi',
+                'description' => 'Medical history & insurance',
+                'icon' => '🏥',
+                'status' => $healthStatus,
+                'metadata' => $medicalRecords->count() . ' records',
             ],
             [
                 'id' => 'employment',
@@ -79,7 +95,40 @@
             ],
         ];
 
-        // Mock Detail Data
+        // Prepare Table Rows
+        $familyRows = $familyMembers->map(fn($item, $index) => [
+            $index + 1,
+            $item->relationship,
+            $item->name,
+            $item->gender === 'L' ? 'Laki-laki' : 'Perempuan',
+            $item->date_of_birth ? \Carbon\Carbon::parse($item->date_of_birth)->translatedFormat('d F Y') : '-',
+            $item->education ?? '-',
+            $item->occupation ?? '-'
+        ]);
+
+        $hobbyRows = $hobbies->map(fn($item, $index) => [
+            $index + 1,
+            $item->name,
+            $item->notes ?? '-'
+        ]);
+
+        $medicalRows = $medicalRecords->map(fn($item, $index) => [
+            $index + 1,
+            \Carbon\Carbon::parse($item->checkup_date)->translatedFormat('d F Y'),
+            $item->location,
+            $item->result,
+            \Illuminate\Support\Str::limit($item->health_resume, 50) ?? '-'
+        ]);
+
+        $insuranceRows = $insurances->map(fn($item, $index) => [
+            $index + 1,
+            $item->name,
+            $item->member_number,
+            $item->policy_number,
+            \Carbon\Carbon::parse($item->start_date)->translatedFormat('d F Y')
+        ]);
+
+        // Module Data
         $moduleData = [
             'master' => [
                 'sections' => [
@@ -136,13 +185,42 @@
                         'title' => 'Informasi Personal',
                         'type' => 'info',
                         'fields' => [
-                            ['Tempat Lahir', 'Bandung'],
-                            ['Tanggal Lahir', '12-03-1975'],
-                            ['Jenis Kelamin', 'Laki-laki'],
-                            ['Agama', 'Islam'],
-                            ['Status Perkawinan', 'Kawin'],
+                            ['Tempat Lahir', 'Bandung'], // Placeholder as these fields are not in User model yet
+                            ['Tanggal Lahir', '12-03-1975'], // Placeholder
+                            ['Jenis Kelamin', 'Laki-laki'], // Placeholder
+                            ['Agama', 'Islam'], // Placeholder
+                            ['Status Perkawinan', 'Kawin'], // Placeholder
                             ['Email', $employee->email],
                         ],
+                    ],
+                    // New Sections populated from Relation Managers
+                    [
+                        'title' => 'Data Keluarga',
+                        'type' => 'table',
+                        'columns' => ['No', 'Hubungan', 'Nama', 'L/P', 'Tgl Lahir', 'Pendidikan', 'Pekerjaan'],
+                        'rows' => $familyRows->toArray(),
+                    ],
+                    [
+                        'title' => 'Hobi & Minat',
+                        'type' => 'table',
+                        'columns' => ['No', 'Nama Hobi', 'Keterangan'],
+                        'rows' => $hobbyRows->toArray(),
+                    ],
+                ],
+            ],
+            'kesehatan' => [
+                'sections' => [
+                    [
+                        'title' => 'Riwayat Kesehatan',
+                        'type' => 'table',
+                        'columns' => ['No', 'Tanggal', 'Lokasi', 'Hasil', 'Resume'],
+                        'rows' => $medicalRows->toArray(),
+                    ],
+                    [
+                        'title' => 'Data Asuransi',
+                        'type' => 'table',
+                        'columns' => ['No', 'Nama Asuransi', 'No. Peserta', 'No. Polis', 'Tgl Mulai'],
+                        'rows' => $insuranceRows->toArray(),
                     ],
                 ],
             ],
