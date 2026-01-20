@@ -3,25 +3,19 @@
 namespace App\Policies;
 
 use Illuminate\Foundation\Auth\User as AuthUser;
-use App\Models\User as UserModel;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
 {
     use HandlesAuthorization;
-
+    
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:User');
     }
 
-    public function view(AuthUser $authUser, UserModel $model): bool
+    public function view(AuthUser $authUser): bool
     {
-        // Allow users to view their own profile regardless of broader permissions
-        if ($authUser->getAuthIdentifier() === $model->getAuthIdentifier()) {
-            return true;
-        }
-
         return $authUser->can('View:User');
     }
 
@@ -38,17 +32,6 @@ class UserPolicy
     public function delete(AuthUser $authUser): bool
     {
         return $authUser->can('Delete:User');
-    }
-
-    public function deleteAny(\Illuminate\Foundation\Auth\User $authUser): bool
-    {
-        // Super admin bypass
-        if (method_exists($authUser, 'hasRole') && $authUser->hasRole('super_admin')) {
-            return true;
-        }
-
-        // Filament Shield convention: `delete_any_user`
-        return $authUser->can('delete_any_user');
     }
 
     public function restore(AuthUser $authUser): bool
@@ -80,4 +63,5 @@ class UserPolicy
     {
         return $authUser->can('Reorder:User');
     }
+
 }

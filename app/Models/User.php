@@ -138,4 +138,40 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Hobby::class);
     }
+
+    // Employment Relations
+    public function rankHistories(): HasMany
+    {
+        return $this->hasMany(RankHistory::class);
+    }
+
+    public function structuralPositions(): HasMany
+    {
+        return $this->hasMany(StructuralPosition::class);
+    }
+
+    public function functionalPositions(): HasMany
+    {
+        return $this->hasMany(FunctionalPosition::class);
+    }
+
+    public function otherPositions(): HasMany
+    {
+        return $this->hasMany(OtherPosition::class);
+    }
+
+    public function salaryIncreases(): HasMany
+    {
+        return $this->hasMany(SalaryIncrease::class);
+    }
+
+    public function performanceAppraisals(): HasMany
+    {
+        return $this->hasMany(PerformanceAppraisal::class);
+    }
+
+    public function awards(): HasMany
+    {
+        return $this->hasMany(Award::class);
+    }
 }
