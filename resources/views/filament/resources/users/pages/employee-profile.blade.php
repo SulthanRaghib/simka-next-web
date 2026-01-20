@@ -554,6 +554,113 @@
         </div>
 
         <!-- Modules Section -->
+        {{-- Tugas & Fungsi Jabatan card: ringkasan yang dapat dikelola --}}
+        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 mt-0">
+                        <div
+                            class="h-11 w-11 flex items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/10 dark:text-primary-300">
+                            <svg class="w-5 h-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12h6M9 16h6M9 8h6M9 3h6a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Tugas & Fungsi Jabatan</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Ringkasan tugas utama untuk posisi saat
+                            ini — tampilkan tugas teratas dan kelola lebih lanjut di halaman edit.</p>
+                        <div class="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                            <span class="inline-flex items-center gap-2">
+                                <span
+                                    class="font-medium text-gray-900 dark:text-white">{{ $employee->positionDuties->count() }}</span>
+                                tugas terdaftar
+                            </span>
+                            <span class="text-muted">•</span>
+                            <span>Terakhir diperbarui:
+                                {{ $employee->positionDuties->max('updated_at') ? \Carbon\Carbon::parse($employee->positionDuties->max('updated_at'))->translatedFormat('d F Y') : '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    @can('update', $employee)
+                        <a href="{{ \App\Filament\Resources\Users\UserResource::getUrl('edit', ['record' => $employee->nip ?? $employee->id]) }}?relation=4#position-duties-relation-manager"
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded bg-primary-500 text-white text-sm shadow-sm hover:bg-primary-600">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 00.707-.293l9.414-9.414a1 1 0 000-1.414L15.414 4.293a1 1 0 00-1.414 0L4 14.293V20z" />
+                            </svg>
+                            Kelola
+                        </a>
+                    @endcan
+
+                    @can('create', \App\Models\PositionDuty::class)
+                        <a href="{{ \App\Filament\Resources\Users\UserResource::getUrl('edit', ['record' => $employee->nip ?? $employee->id]) }}?relation=4&action=create#position-duties-relation-manager"
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded border border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 5v14M5 12h14" />
+                            </svg>
+                            Tambah
+                        </a>
+                    @endcan
+                </div>
+            </div>
+
+            <div class="mt-5 grid gap-3">
+                @forelse($employee->positionDuties->take(5) as $duty)
+                    <article
+                        class="flex items-start gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="h-8 w-8 rounded-lg flex items-center justify-center bg-primary-600 text-white font-semibold">
+                                {{ $loop->iteration }}</div>
+                        </div>
+
+                        <div class="min-w-0">
+                            <div class="flex items-center justify-between gap-3">
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    {{ $duty->title }}</h4>
+                                <span
+                                    class="text-xs text-gray-500 dark:text-gray-400">{{ $duty->position_type ?? '-' }}</span>
+                            </div>
+                            @if ($duty->description)
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-3"
+                                    title="{{ strip_tags($duty->description) }}">{!! \Illuminate\Support\Str::limit(strip_tags($duty->description), 220) !!}</p>
+                            @else
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Tidak ada deskripsi.</p>
+                            @endif
+                        </div>
+                    </article>
+                @empty
+                    <div
+                        class="flex flex-col items-start gap-3 p-4 rounded-lg border border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                        <div class="text-sm text-gray-700 dark:text-gray-200">Belum ada tugas terdaftar.</div>
+                        <div class="text-sm text-gray-500">Tambahkan tugas baru untuk posisi ini agar ringkasan lebih
+                            informatif.</div>
+                        <div class="mt-2">
+                            @can('create', \App\Models\PositionDuty::class)
+                                <a href="{{ \App\Filament\Resources\Users\UserResource::getUrl('edit', ['record' => $employee->nip ?? $employee->id]) }}?relation=4&action=create#position-duties-relation-manager"
+                                    class="inline-flex items-center gap-2 px-3 py-2 rounded bg-primary-500 text-white text-sm">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M12 5v14M5 12h14" />
+                                    </svg>
+                                    Tambah Tugas
+                                </a>
+                            @endcan
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
         <div>
             <h2 class="mb-6 text-lg font-semibold text-gray-900 dark:text-white">Profile Modules</h2>
 
@@ -666,7 +773,8 @@
                                                         class="text-xs text-gray-500 dark:text-gray-400 uppercase bg-gray-50 dark:bg-gray-800/50">
                                                         <tr>
                                                             @foreach ($section['columns'] as $col)
-                                                                <th class="px-4 py-3 font-semibold">{{ $col }}
+                                                                <th class="px-4 py-3 font-semibold">
+                                                                    {{ $col }}
                                                                 </th>
                                                             @endforeach
                                                         </tr>

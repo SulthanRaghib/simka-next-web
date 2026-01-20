@@ -174,4 +174,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Award::class);
     }
+
+    public function positionDuties(): HasMany
+    {
+        return $this->hasMany(\App\Models\PositionDuty::class)->orderBy('order');
+    }
 }

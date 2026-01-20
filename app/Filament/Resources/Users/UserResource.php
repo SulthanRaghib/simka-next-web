@@ -14,6 +14,7 @@ use App\Filament\Resources\Users\RelationManagers\OtherPositionsRelationManager;
 use App\Filament\Resources\Users\RelationManagers\SalaryIncreasesRelationManager;
 use App\Filament\Resources\Users\RelationManagers\PerformanceAppraisalsRelationManager;
 use App\Filament\Resources\Users\RelationManagers\AwardsRelationManager;
+use App\Filament\Resources\Users\RelationManagers\PositionDutiesRelationManager;
 use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
@@ -56,6 +57,7 @@ class UserResource extends Resource
             MedicalRecordsRelationManager::class,
             InsurancesRelationManager::class,
             HobbiesRelationManager::class,
+            PositionDutiesRelationManager::class,
 
             // Employment Data
             RankHistoriesRelationManager::class,
