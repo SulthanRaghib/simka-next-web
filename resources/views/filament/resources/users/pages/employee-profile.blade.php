@@ -8,9 +8,22 @@
         $medicalRecords = $employee->medicalRecords;
         $insurances = $employee->insurances;
 
+        // Employment Data
+        $rankHistories = $employee->rankHistories;
+        $structuralPositions = $employee->structuralPositions;
+        $functionalPositions = $employee->functionalPositions;
+        $otherPositions = $employee->otherPositions;
+        $salaryIncreases = $employee->salaryIncreases;
+        $performanceAppraisals = $employee->performanceAppraisals;
+        $awards = $employee->awards;
+
         // Dynamic Status Helpers
-        $biodataStatus = ($familyMembers->isNotEmpty() || $hobbies->isNotEmpty()) ? 'Active' : 'Incomplete';
-        $healthStatus = ($medicalRecords->isNotEmpty() || $insurances->isNotEmpty()) ? 'Active' : 'No Data';
+        $biodataStatus = $familyMembers->isNotEmpty() || $hobbies->isNotEmpty() ? 'Active' : 'Incomplete';
+        $healthStatus = $medicalRecords->isNotEmpty() || $insurances->isNotEmpty() ? 'Active' : 'No Data';
+        $employmentStatus =
+            $rankHistories->isNotEmpty() || $structuralPositions->isNotEmpty() ? 'Active' : 'Incomplete';
+        $performanceStatus = $performanceAppraisals->isNotEmpty() ? 'Active' : 'No Data';
+        $awardsStatus = $awards->isNotEmpty() ? 'Complete' : 'No Data';
 
         $userModules = [
             [
@@ -42,8 +55,16 @@
                 'title' => 'Kepegawaian',
                 'description' => 'Employment & position history',
                 'icon' => '💼',
-                'status' => 'Active',
-                'metadata' => 'Current rank: ' . ($employee->rank->name ?? '-'),
+                'status' => $employmentStatus,
+                'metadata' => $rankHistories->count() . ' rank records',
+            ],
+            [
+                'id' => 'performance',
+                'title' => 'Penilaian & Penghargaan',
+                'description' => 'Performance appraisals & awards',
+                'icon' => '⭐',
+                'status' => $performanceStatus,
+                'metadata' => $performanceAppraisals->count() . ' appraisals, ' . $awards->count() . ' awards',
             ],
             [
                 'id' => 'education',
@@ -96,37 +117,147 @@
         ];
 
         // Prepare Table Rows
-        $familyRows = $familyMembers->map(fn($item, $index) => [
-            $index + 1,
-            $item->relationship,
-            $item->name,
-            $item->gender === 'L' ? 'Laki-laki' : 'Perempuan',
-            $item->date_of_birth ? \Carbon\Carbon::parse($item->date_of_birth)->translatedFormat('d F Y') : '-',
-            $item->education ?? '-',
-            $item->occupation ?? '-'
-        ]);
+        $familyRows = $familyMembers->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->relationship,
+                $item->name,
+                $item->gender === 'L' ? 'Laki-laki' : 'Perempuan',
+                $item->date_of_birth ? \Carbon\Carbon::parse($item->date_of_birth)->translatedFormat('d F Y') : '-',
+                $item->education ?? '-',
+                $item->occupation ?? '-',
+            ],
+        );
 
-        $hobbyRows = $hobbies->map(fn($item, $index) => [
-            $index + 1,
-            $item->name,
-            $item->notes ?? '-'
-        ]);
+        $hobbyRows = $hobbies->map(fn($item, $index) => [$index + 1, $item->name, $item->notes ?? '-']);
 
-        $medicalRows = $medicalRecords->map(fn($item, $index) => [
-            $index + 1,
-            \Carbon\Carbon::parse($item->checkup_date)->translatedFormat('d F Y'),
-            $item->location,
-            $item->result,
-            \Illuminate\Support\Str::limit($item->health_resume, 50) ?? '-'
-        ]);
+        $medicalRows = $medicalRecords->map(
+            fn($item, $index) => [
+                $index + 1,
+                \Carbon\Carbon::parse($item->checkup_date)->translatedFormat('d F Y'),
+                $item->location,
+                $item->result,
+                \Illuminate\Support\Str::limit($item->health_resume, 50) ?? '-',
+            ],
+        );
 
-        $insuranceRows = $insurances->map(fn($item, $index) => [
-            $index + 1,
-            $item->name,
-            $item->member_number,
-            $item->policy_number,
-            \Carbon\Carbon::parse($item->start_date)->translatedFormat('d F Y')
-        ]);
+        $insuranceRows = $insurances->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->name,
+                $item->member_number,
+                $item->policy_number,
+                \Carbon\Carbon::parse($item->start_date)->translatedFormat('d F Y'),
+            ],
+        );
+
+        // Employment Table Rows
+        $rankHistoryRows = $rankHistories->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->status,
+                $item->rank_grade,
+                \Carbon\Carbon::parse($item->effective_date)->translatedFormat('d F Y'),
+                $item->promotion_type,
+                $item->service_period ?? '-',
+                ($item->decree_number ?? '-') .
+                ' / ' .
+                (\Carbon\Carbon::parse($item->decree_date)->translatedFormat('d F Y') ?? '-'),
+                $item->notes ?? '-',
+            ],
+        );
+
+        $structuralPositionRows = $structuralPositions->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->position_name,
+                $item->work_unit,
+                \Carbon\Carbon::parse($item->start_date)->translatedFormat('d F Y') .
+                ($item->end_date
+                    ? ' - ' . \Carbon\Carbon::parse($item->end_date)->translatedFormat('d F Y')
+                    : ' - Sekarang'),
+                ($item->decree_number ?? '-') .
+                ' / ' .
+                (\Carbon\Carbon::parse($item->decree_date)->translatedFormat('d F Y') ?? '-'),
+                $item->echelon ?? '-',
+            ],
+        );
+
+        $functionalPositionRows = $functionalPositions->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->jft_name,
+                $item->agency_subminkal,
+                $item->level_grade,
+                \Carbon\Carbon::parse($item->start_date)->translatedFormat('d F Y') .
+                ($item->end_date
+                    ? ' - ' . \Carbon\Carbon::parse($item->end_date)->translatedFormat('d F Y')
+                    : ' - Sekarang'),
+                ($item->decree_number ?? '-') .
+                ' / ' .
+                (\Carbon\Carbon::parse($item->decree_date)->translatedFormat('d F Y') ?? '-'),
+                $item->credit_score ?? '-',
+                $item->status ?? '-',
+                $item->notes ?? '-',
+            ],
+        );
+
+        $otherPositionRows = $otherPositions->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->position_name,
+                $item->agency,
+                \Carbon\Carbon::parse($item->start_date)->translatedFormat('d F Y') .
+                ($item->end_date
+                    ? ' - ' . \Carbon\Carbon::parse($item->end_date)->translatedFormat('d F Y')
+                    : ' - Sekarang'),
+                ($item->decree_number ?? '-') .
+                ' / ' .
+                (\Carbon\Carbon::parse($item->decree_date)->translatedFormat('d F Y') ?? '-'),
+                $item->notes ?? '-',
+            ],
+        );
+
+        $salaryIncreaseRows = $salaryIncreases->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->decree_number,
+                \Carbon\Carbon::parse($item->decree_date)->translatedFormat('d F Y'),
+                $item->grade,
+                $item->service_period ?? '-',
+                'Rp ' . number_format($item->salary_amount, 0, ',', '.'),
+                \Carbon\Carbon::parse($item->effective_date)->translatedFormat('d F Y'),
+            ],
+        );
+
+        $performanceAppraisalRows = $performanceAppraisals->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->year,
+                $item->loyalty_score,
+                $item->achievement_score,
+                $item->responsibility_score,
+                $item->obedience_score,
+                $item->honesty_score,
+                $item->cooperation_score,
+                $item->initiative_score,
+                $item->leadership_score,
+                $item->total_score,
+                $item->rating,
+            ],
+        );
+
+        $awardRows = $awards->map(
+            fn($item, $index) => [
+                $index + 1,
+                $item->award_name,
+                $item->year,
+                $item->decree_number ?? '-',
+                $item->decree_date ? \Carbon\Carbon::parse($item->decree_date)->translatedFormat('d F Y') : '-',
+                $item->awarding_body,
+                $item->notes ?? '-',
+            ],
+        );
 
         // Module Data
         $moduleData = [
@@ -227,18 +358,104 @@
             'employment' => [
                 'sections' => [
                     [
-                        'title' => 'Riwayat Jabatan',
+                        'title' => 'Data Pangkat dan Golongan',
                         'type' => 'table',
-                        'columns' => ['No', 'Nama Jabatan', 'Unit Kerja', 'TMT', 'Status'],
-                        'rows' => [
-                            [
-                                '1',
-                                $employee->jobPosition->name ?? '-',
-                                $employee->workUnit->name ?? '-',
-                                '01-01-2024',
-                                'Aktif',
-                            ],
+                        'columns' => [
+                            'No',
+                            'Status',
+                            'Pangkat/Gol.',
+                            'TMT',
+                            'Jenis KP',
+                            'Masa Kerja',
+                            'No/Tgl SK',
+                            'Keterangan',
                         ],
+                        'rows' => $rankHistoryRows->toArray(),
+                    ],
+                    [
+                        'title' => 'Data Jabatan Struktural',
+                        'type' => 'table',
+                        'columns' => [
+                            'No',
+                            'Nama Jabatan',
+                            'Unit Kerja / Instansi',
+                            'TMT Mulai/Selesai',
+                            'No SK / Tanggal',
+                            'Eselon',
+                        ],
+                        'rows' => $structuralPositionRows->toArray(),
+                    ],
+                    [
+                        'title' => 'Data Jabatan Fungsional Tertentu',
+                        'type' => 'table',
+                        'columns' => [
+                            'No',
+                            'Nama JFT',
+                            'Instansi Subminkal',
+                            'Jenjang/Gol',
+                            'TMT Mulai/Selesai',
+                            'No SK / Tanggal',
+                            'Angka Kredit',
+                            'Status',
+                            'Keterangan',
+                        ],
+                        'rows' => $functionalPositionRows->toArray(),
+                    ],
+                    [
+                        'title' => 'Data Jabatan Lainnya',
+                        'type' => 'table',
+                        'columns' => [
+                            'No',
+                            'Nama Jabatan',
+                            'Instansi',
+                            'TMT Mulai/Selesai',
+                            'No SK / Tanggal',
+                            'Keterangan',
+                        ],
+                        'rows' => $otherPositionRows->toArray(),
+                    ],
+                    [
+                        'title' => 'Data Kenaikan Gaji Berkala (KGB)',
+                        'type' => 'table',
+                        'columns' => ['No', 'Nomor SK', 'Tgl SK', 'Gol.', 'Masa Kerja', 'Besaran Gaji', 'TMT Gaji'],
+                        'rows' => $salaryIncreaseRows->toArray(),
+                    ],
+                ],
+            ],
+            'performance' => [
+                'sections' => [
+                    [
+                        'title' => 'Data DP3',
+                        'type' => 'table',
+                        'columns' => [
+                            'No',
+                            'Tahun',
+                            'Kesetiaan',
+                            'Prestasi Kerja',
+                            'Tanggung Jawab',
+                            'Ketaatan',
+                            'Kejujuran',
+                            'Kerjasama',
+                            'Prakarsa',
+                            'Kepemimpinan',
+                            'Total Nilai',
+                            'Sebutan',
+                        ],
+                        'rows' => $performanceAppraisalRows->toArray(),
+                    ],
+                    [
+                        'title' => 'Penghargaan dan Tanda Jasa',
+                        'type' => 'table',
+                        'columns' => [
+                            'No',
+                            'Nama Penghargaan',
+                            'Tahun',
+                            'Nomor SK',
+                            'Tanggal SK',
+                            'Pemberi Pengharagaan',
+                            'Keterangan',
+                        ],
+                        'rows' => $awardRows->toArray(),
                     ],
                 ],
             ],

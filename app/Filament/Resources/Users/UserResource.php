@@ -7,6 +7,13 @@ use App\Filament\Resources\Users\RelationManagers\FamilyMembersRelationManager;
 use App\Filament\Resources\Users\RelationManagers\HobbiesRelationManager;
 use App\Filament\Resources\Users\RelationManagers\InsurancesRelationManager;
 use App\Filament\Resources\Users\RelationManagers\MedicalRecordsRelationManager;
+use App\Filament\Resources\Users\RelationManagers\RankHistoriesRelationManager;
+use App\Filament\Resources\Users\RelationManagers\StructuralPositionsRelationManager;
+use App\Filament\Resources\Users\RelationManagers\FunctionalPositionsRelationManager;
+use App\Filament\Resources\Users\RelationManagers\OtherPositionsRelationManager;
+use App\Filament\Resources\Users\RelationManagers\SalaryIncreasesRelationManager;
+use App\Filament\Resources\Users\RelationManagers\PerformanceAppraisalsRelationManager;
+use App\Filament\Resources\Users\RelationManagers\AwardsRelationManager;
 use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
@@ -44,10 +51,20 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
+            // Personal Data
             FamilyMembersRelationManager::class,
             MedicalRecordsRelationManager::class,
             InsurancesRelationManager::class,
             HobbiesRelationManager::class,
+
+            // Employment Data
+            RankHistoriesRelationManager::class,
+            StructuralPositionsRelationManager::class,
+            FunctionalPositionsRelationManager::class,
+            OtherPositionsRelationManager::class,
+            SalaryIncreasesRelationManager::class,
+            PerformanceAppraisalsRelationManager::class,
+            AwardsRelationManager::class,
         ];
     }
 
