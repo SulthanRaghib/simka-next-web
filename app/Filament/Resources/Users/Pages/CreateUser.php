@@ -11,6 +11,7 @@ class CreateUser extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        // Redirect to Edit page after creation so user can immediately add relations (Family, Medical, etc.)
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
     }
 }

@@ -183,6 +183,51 @@ class UserForm
                         Forms\Components\Toggle::make('is_active')
                             ->label('Active User')
                             ->default(true),
+                    ]),
+
+                Section::make('Data Tambahan (Hanya saat Create)')
+                    ->description('Anda dapat menambahkan data keluarga langsung di sini. Setelah disimpan, data ini dapat diedit melalui tab khusus.')
+                    ->visibleOn('create')
+                    ->collapsed() // Default tertutup
+                    ->schema([
+                        Forms\Components\Repeater::make('familyMembers')
+                            ->relationship()
+                            ->label('Anggota Keluarga')
+                            ->schema([
+                                Forms\Components\TextInput::make('relationship')
+                                    ->label('Hubungan')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Nama Lengkap')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Select::make('gender')
+                                    ->label('Jenis Kelamin')
+                                    ->options([
+                                        'L' => 'Laki-laki',
+                                        'P' => 'Perempuan',
+                                    ])
+                                    ->required(),
+                                Forms\Components\TextInput::make('place_of_birth')
+                                    ->label('Tempat Lahir')
+                                    ->maxLength(255),
+                                Forms\Components\DatePicker::make('date_of_birth')
+                                    ->label('Tanggal Lahir'),
+                                Forms\Components\Select::make('education')
+                                    ->label('Pendidikan Terakhir')
+                                    ->options([
+                                        'SD/Sederajat' => 'SD/Sederajat',
+                                        'SMP/Sederajat' => 'SMP/Sederajat',
+                                        'SMA/Sederajat' => 'SMA/Sederajat',
+                                        'Diploma' => 'Diploma',
+                                        'Sarjana' => 'Sarjana',
+                                        'Magister' => 'Magister',
+                                        'Doktor' => 'Doktor',
+                                    ]),
+                            ])
+                            ->columns(2)
+                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
                     ])
             ]);
     }
